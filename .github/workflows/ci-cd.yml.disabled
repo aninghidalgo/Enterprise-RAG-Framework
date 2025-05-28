@@ -2,7 +2,7 @@ name: Enterprise RAG CI/CD
  
 on:
   workflow_dispatch:
-    # Manual trigger only
+    # Manual trigger only 
 
 jobs:
   test:
