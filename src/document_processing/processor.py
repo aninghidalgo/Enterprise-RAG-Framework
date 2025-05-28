@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class DocumentProcessor:
     """
     Processes documents of various formats into chunks suitable for embedding and retrieval.
-    Supports PDF, DOCX, HTML, text, markdown, images (with OCR), and audio (with transcription).
+    Supports PDF, DOCX, HTML, text, markdown, images (with OCR), audio (with transcription), and Excel.
     """
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -45,44 +45,40 @@ class DocumentProcessor:
 
         # Text processor (always enabled)
         from .text_processor import TextProcessor
-
         self.processors["text"] = TextProcessor(self.config)
 
         try:
             # PDF processor
             from .pdf_processor import PDFProcessor
-
             self.processors["pdf"] = PDFProcessor(self.config)
         except ImportError:
-            logger.warning(
-                "PDF processing libraries not found, PDF processing disabled"
-            )
+            logger.warning("PDF processing libraries not found, PDF processing disabled")
 
         try:
             # DOCX processor
             from .docx_processor import DocxProcessor
-
             self.processors["docx"] = DocxProcessor(self.config)
         except ImportError:
-            logger.warning(
-                "DOCX processing libraries not found, DOCX processing disabled"
-            )
+            logger.warning("DOCX processing libraries not found, DOCX processing disabled")
 
         try:
             # HTML processor
             from .html_processor import HTMLProcessor
-
             self.processors["html"] = HTMLProcessor(self.config)
         except ImportError:
-            logger.warning(
-                "HTML processing libraries not found, HTML processing disabled"
-            )
+            logger.warning("HTML processing libraries not found, HTML processing disabled")
+
+        try:
+            # Excel processor
+            from .excel_processor import ExcelProcessor
+            self.processors["excel"] = ExcelProcessor(self.config)
+        except ImportError:
+            logger.warning("Excel processing libraries not found, Excel processing disabled")
 
         # OCR processor (optional)
         if self.config.get("ocr_enabled", False):
             try:
                 from .ocr_processor import OCRProcessor
-
                 self.processors["image"] = OCRProcessor(self.config)
                 logger.info("OCR processing enabled")
             except ImportError:
@@ -92,13 +88,10 @@ class DocumentProcessor:
         if self.config.get("audio_transcription_enabled", False):
             try:
                 from .audio_processor import AudioProcessor
-
                 self.processors["audio"] = AudioProcessor(self.config)
                 logger.info("Audio transcription enabled")
             except ImportError:
-                logger.warning(
-                    "Audio processing libraries not found, audio transcription disabled"
-                )
+                logger.warning("Audio processing libraries not found, audio transcription disabled")
 
     def process_documents(
         self, documents: List[Dict[str, Any]]
@@ -196,7 +189,7 @@ class DocumentProcessor:
             document: Document dictionary
 
         Returns:
-            Document type string (pdf, docx, html, text, image, audio)
+            Document type string (pdf, docx, html, text, image, audio, excel)
         """
         # Check if type is explicitly provided
         if "type" in document:
@@ -209,10 +202,10 @@ class DocumentProcessor:
             mimetype = metadata["mimetype"]
             if mimetype.startswith("application/pdf"):
                 return "pdf"
-            elif mimetype.startswith(
-                "application/vnd.openxmlformats-officedocument.wordprocessingml"
-            ):
+            elif mimetype.startswith("application/vnd.openxmlformats-officedocument.wordprocessingml"):
                 return "docx"
+            elif mimetype.startswith("application/vnd.openxmlformats-officedocument.spreadsheetml"):
+                return "excel"
             elif mimetype.startswith("text/html"):
                 return "html"
             elif mimetype.startswith("text/"):
@@ -229,18 +222,15 @@ class DocumentProcessor:
                 return "pdf"
             elif filename.endswith(".docx") or filename.endswith(".doc"):
                 return "docx"
+            elif filename.endswith(".xlsx") or filename.endswith(".xls"):
+                return "excel"
             elif filename.endswith(".html") or filename.endswith(".htm"):
                 return "html"
             elif filename.endswith(".txt") or filename.endswith(".md"):
                 return "text"
-            elif any(
-                filename.endswith(ext)
-                for ext in [".jpg", ".jpeg", ".png", ".gif", ".bmp"]
-            ):
+            elif any(filename.endswith(ext) for ext in [".jpg", ".jpeg", ".png", ".gif", ".bmp"]):
                 return "image"
-            elif any(
-                filename.endswith(ext) for ext in [".mp3", ".wav", ".ogg", ".m4a"]
-            ):
+            elif any(filename.endswith(ext) for ext in [".mp3", ".wav", ".ogg", ".m4a"]):
                 return "audio"
 
         # Default to text
