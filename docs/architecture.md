@@ -1,4 +1,4 @@
-# Enterprise-Ready RAG System - Architecture
+# Enterprise-Ready RAG System - Architecture 
 
 This document outlines the architecture of our Enterprise-Ready RAG System, describing the components, their interactions, and the design principles guiding the implementation.
 
