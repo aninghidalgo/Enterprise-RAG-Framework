@@ -7,7 +7,6 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue)](https://www.python.org/)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/TaimoorKhan10/Enterprise-RAG-Framework/ci-cd.yml?branch=main)](https://github.com/TaimoorKhan10/Enterprise-RAG-Framework/actions)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](docs/)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)](https://github.com/TaimoorKhan10/Enterprise-RAG-Framework/actions)
