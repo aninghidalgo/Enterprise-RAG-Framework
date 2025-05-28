@@ -21,7 +21,7 @@ client = TestClient(app)
 def test_health_endpoint():
     """Test the health check endpoint."""
     response = client.get("/health")
-    
+
     assert response.status_code == 200
     data = response.json()
     assert "status" in data
@@ -33,15 +33,12 @@ def test_add_document_endpoint():
     # Create a test document
     document = {
         "text": "This is a test document for the RAG API.",
-        "metadata": {
-            "source": "api_test",
-            "title": "Test Document"
-        }
+        "metadata": {"source": "api_test", "title": "Test Document"},
     }
-    
+
     # Send request
     response = client.post("/documents", json=document)
-    
+
     # Check response
     assert response.status_code == 200
     data = response.json()
@@ -55,17 +52,13 @@ def test_query_endpoint():
     # Create query request
     query_request = {
         "query": "What is RAG?",
-        "retrieval_options": {
-            "top_k": 3
-        },
-        "generation_options": {
-            "temperature": 0.7
-        }
+        "retrieval_options": {"top_k": 3},
+        "generation_options": {"temperature": 0.7},
     }
-    
+
     # Send request
     response = client.post("/query", json=query_request)
-    
+
     # Check response
     assert response.status_code == 200
     data = response.json()
@@ -83,21 +76,21 @@ def test_batch_document_upload():
     documents = [
         {
             "text": "Document 1 for batch testing",
-            "metadata": {"source": "batch_test", "index": 1}
+            "metadata": {"source": "batch_test", "index": 1},
         },
         {
             "text": "Document 2 for batch testing",
-            "metadata": {"source": "batch_test", "index": 2}
+            "metadata": {"source": "batch_test", "index": 2},
         },
         {
             "text": "Document 3 for batch testing",
-            "metadata": {"source": "batch_test", "index": 3}
-        }
+            "metadata": {"source": "batch_test", "index": 3},
+        },
     ]
-    
+
     # Send request
     response = client.post("/documents/batch", json=documents)
-    
+
     # Check response
     assert response.status_code == 200
     data = response.json()
@@ -113,19 +106,19 @@ def test_evaluation_endpoint():
             "query": "What is RAG?",
             "reference": {
                 "answer": "Retrieval Augmented Generation (RAG) is a technique that enhances LLMs."
-            }
+            },
         }
     ]
-    
+
     # Create evaluation request
     evaluation_request = {
         "test_dataset": test_dataset,
-        "metrics": ["retrieval_precision", "answer_relevance"]
+        "metrics": ["retrieval_precision", "answer_relevance"],
     }
-    
+
     # Send request
     response = client.post("/evaluate", json=evaluation_request)
-    
+
     # Check response
     assert response.status_code == 200
     data = response.json()

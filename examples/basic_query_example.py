@@ -14,57 +14,53 @@ sys.path.append(str(project_root))
 
 from src.enterprise_rag import RAGSystem
 
+
 def main():
     """Run a basic query example."""
-    
+
     # Initialize the RAG system with a basic configuration
     rag_system = RAGSystem(
         vector_store_config={
             "type": "faiss",
             "index_path": "data/index",
-            "embedding_model": "sentence-transformers/all-mpnet-base-v2"
+            "embedding_model": "sentence-transformers/all-mpnet-base-v2",
         },
-        retrieval_config={
-            "type": "hybrid",
-            "top_k": 5,
-            "use_reranker": True
-        },
+        retrieval_config={"type": "hybrid", "top_k": 5, "use_reranker": True},
         generation_config={
             "model": "gpt-3.5-turbo",
             "temperature": 0.7,
-            "max_tokens": 500
-        }
+            "max_tokens": 500,
+        },
     )
-    
+
     # Define your query
-    query = "What are the key benefits of using a RAG system for enterprise applications?"
-    
+    query = (
+        "What are the key benefits of using a RAG system for enterprise applications?"
+    )
+
     # Optional query parameters
     query_options = {
         "filters": {
             "metadata.doc_type": "pdf",  # Optional filter by document type
-            "metadata.date": {"$gt": "2022-01-01"}  # Filter by date
+            "metadata.date": {"$gt": "2022-01-01"},  # Filter by date
         },
-        "retrieval_options": {
-            "use_semantic": True,
-            "use_keyword": True
-        }
+        "retrieval_options": {"use_semantic": True, "use_keyword": True},
     }
-    
+
     # Execute the query
     print(f"Querying: '{query}'")
-    
+
     response = rag_system.query(query, options=query_options)
-    
+
     # Print the results
     print("\n----- ANSWER -----")
     print(response["answer"])
-    
+
     print("\n----- SOURCES -----")
     for i, source in enumerate(response["sources"], 1):
         print(f"{i}. {source['title']} (score: {source['score']:.3f})")
         print(f"   Snippet: {source['text'][:150]}...")
-    
+
     # Print performance metrics
     print("\n----- PERFORMANCE METRICS -----")
     for key, value in response["metrics"].items():
@@ -80,5 +76,5 @@ if __name__ == "__main__":
         print("WARNING: OPENAI_API_KEY environment variable is not set.")
         print("Set it with: export OPENAI_API_KEY=your_api_key_here")
         print("For this example, using a mock response instead.\n")
-    
+
     main()

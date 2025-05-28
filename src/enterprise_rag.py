@@ -49,15 +49,21 @@ class RAGSystem:
 
         # Initialize components
         self.document_processor = DocumentProcessor()
-        self.retrieval_engine = RetrievalEngine(self.retrieval_config, self.vector_store_config)
+        self.retrieval_engine = RetrievalEngine(
+            self.retrieval_config, self.vector_store_config
+        )
         self.context_augmenter = ContextAugmenter(self.augmentation_config)
         self.response_generator = ResponseGenerator(self.generation_config)
 
-        logger.info("RAG system initialized with configs: %s", 
-                   {"retrieval": self.retrieval_config, 
-                    "augmentation": self.augmentation_config,
-                    "generation": self.generation_config,
-                    "vector_store": self.vector_store_config})
+        logger.info(
+            "RAG system initialized with configs: %s",
+            {
+                "retrieval": self.retrieval_config,
+                "augmentation": self.augmentation_config,
+                "generation": self.generation_config,
+                "vector_store": self.vector_store_config,
+            },
+        )
 
     def index_documents(self, documents: List[Dict[str, Any]]) -> None:
         """
@@ -71,11 +77,11 @@ class RAGSystem:
         logger.info("Indexed %d documents", len(documents))
 
     def query(
-        self, 
-        query: str, 
+        self,
+        query: str,
         filters: Optional[Dict[str, Any]] = None,
         retrieval_options: Optional[Dict[str, Any]] = None,
-        generation_options: Optional[Dict[str, Any]] = None
+        generation_options: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Process a query through the RAG pipeline.
@@ -90,24 +96,20 @@ class RAGSystem:
             Dict with answer, sources, and additional metadata
         """
         logger.info("Processing query: %s", query)
-        
+
         # Retrieve relevant documents
         retrieved_docs = self.retrieval_engine.retrieve(
-            query, 
-            filters=filters, 
-            options=retrieval_options
+            query, filters=filters, options=retrieval_options
         )
-        
+
         # Augment context based on retrieved documents
         augmented_context = self.context_augmenter.augment(query, retrieved_docs)
-        
+
         # Generate response
         response = self.response_generator.generate(
-            query, 
-            augmented_context, 
-            options=generation_options
+            query, augmented_context, options=generation_options
         )
-        
+
         return {
             "query": query,
             "answer": response["text"],
@@ -121,14 +123,14 @@ class RAGSystem:
                     "augmentation_ms": response["latency"]["augmentation_ms"],
                     "generation_ms": response["latency"]["generation_ms"],
                     "total_ms": response["latency"]["total_ms"],
-                }
-            }
+                },
+            },
         }
-    
+
     def evaluate(
-        self, 
-        test_dataset: Union[str, List[Dict[str, Any]]], 
-        metrics: Optional[List[str]] = None
+        self,
+        test_dataset: Union[str, List[Dict[str, Any]]],
+        metrics: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Evaluate the RAG system using the evaluation suite.
@@ -141,10 +143,10 @@ class RAGSystem:
             Dictionary of evaluation results by metric
         """
         from .evaluation.evaluator import EvaluationSuite
-        
+
         evaluator = EvaluationSuite()
         return evaluator.evaluate(self, test_dataset, metrics)
-    
+
     def get_status(self) -> Dict[str, Any]:
         """
         Get the current status of the RAG system.

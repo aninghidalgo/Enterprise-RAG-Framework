@@ -23,27 +23,28 @@ sys.path.append(str(project_root))
 from src.enterprise_rag import RAGSystem
 from src.document_processing.processor import DocumentProcessor
 
+
 def main():
     """Run a document indexing example."""
-    
+
     # Initialize the RAG system
     rag_system = RAGSystem(
         vector_store_config={
             "type": "faiss",
             "index_path": "data/index",
-            "embedding_model": "sentence-transformers/all-mpnet-base-v2"
+            "embedding_model": "sentence-transformers/all-mpnet-base-v2",
         }
     )
-    
+
     # Define document paths (replace with your actual documents)
     documents_dir = Path("examples/sample_documents")
     if not documents_dir.exists():
         logger.warning(f"Sample documents directory not found: {documents_dir}")
         logger.info("Creating sample documents directory and a sample text file")
-        
+
         # Create directory
         documents_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create a sample text file
         sample_text = """
         # Enterprise-Ready RAG System
@@ -68,43 +69,41 @@ def main():
            
         5. **Cost Efficiency**: More efficient than fine-tuning large models on domain-specific data.
         """
-        
+
         with open(documents_dir / "rag_overview.txt", "w", encoding="utf-8") as f:
             f.write(sample_text)
-    
+
     # Process documents
     document_processor = DocumentProcessor(
-        chunking_strategy="recursive",
-        chunk_size=1000,
-        chunk_overlap=200
+        chunking_strategy="recursive", chunk_size=1000, chunk_overlap=200
     )
-    
+
     # Find documents
     document_paths = list(documents_dir.glob("**/*.*"))
     logger.info(f"Found {len(document_paths)} documents to process")
-    
+
     # Process and index documents
     for doc_path in document_paths:
         try:
             logger.info(f"Processing document: {doc_path}")
-            
+
             # Process document into chunks
             doc_chunks = document_processor.process_document(str(doc_path))
-            
+
             logger.info(f"Created {len(doc_chunks)} chunks from {doc_path.name}")
-            
+
             # Add document chunks to RAG system
             doc_ids = rag_system.add_documents(doc_chunks)
-            
+
             logger.info(f"Indexed document with {len(doc_ids)} chunks")
-            
+
         except Exception as e:
             logger.error(f"Error processing document {doc_path}: {str(e)}")
-    
+
     # Save the index
     rag_system.save_index()
     logger.info(f"Index saved to {rag_system.vector_store.index_path}")
-    
+
     # Print statistics
     stats = rag_system.get_stats()
     print("\n----- INDEX STATISTICS -----")
