@@ -1,0 +1,65 @@
+# Core dependencies
+fastapi>=0.100.0
+uvicorn>=0.22.0
+pydantic>=2.0.0
+numpy>=1.21.0
+pandas>=1.3.0
+scikit-learn>=1.0.0
+sentence-transformers>=2.2.2
+faiss-cpu>=1.7.4  # Use faiss-gpu for GPU acceleration
+rank-bm25>=0.2.2
+python-multipart>=0.0.6
+python-dotenv>=1.0.0
+
+# Document processing
+PyPDF2>=3.0.0
+pytesseract>=0.3.10
+Pillow>=9.5.0
+docx2txt>=0.8
+python-pptx>=0.6.21
+openpyxl>=3.1.2
+beautifulsoup4>=4.12.2
+html5lib>=1.1
+markdown>=3.4.3
+
+# LLM integrations
+openai>=1.0.0
+anthropic>=0.5.0
+transformers>=4.30.0
+tiktoken>=0.4.0
+
+# Storage and database
+sqlalchemy>=2.0.0
+alembic>=1.11.1
+pymongo>=4.4.0
+redis>=4.6.0
+
+# Evaluation and metrics
+ragas>=0.0.16
+nltk>=3.8.1
+rouge>=1.0.1
+bert-score>=0.3.13
+
+# Monitoring and visualization
+prometheus-client>=0.17.0
+streamlit>=1.24.0
+plotly>=5.15.0
+psutil>=5.9.5
+colorama>=0.4.6
+
+# Development and testing
+pytest>=7.3.1
+pytest-cov>=4.1.0
+black>=23.3.0
+flake8>=6.0.0
+mypy>=1.3.0
+
+# Deployment
+gunicorn>=21.2.0
+docker>=6.1.2
+kubernetes>=27.2.0
+
+# CLI tools
+typer>=0.9.0
+rich>=13.4.2
+tqdm>=4.65.0

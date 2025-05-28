@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-rag
+  labels:
+    app: enterprise-rag
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: enterprise-rag
+  template:
+    metadata:
+      labels:
+        app: enterprise-rag
+    spec:
+      containers:
+      - name: enterprise-rag
+        image: enterprise-rag:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: enterprise-rag-secrets
+              key: openai_api_key
+        - name: PYTHONPATH
+          value: /app
+        - name: RAG_CONFIG_PATH
+          value: /app/config/rag_config.json
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config
+        - name: data-volume
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 15
+      volumes:
+      - name: config-volume
+        configMap:
+          name: enterprise-rag-config
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: enterprise-rag-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enterprise-rag
+spec:
+  selector:
+    app: enterprise-rag
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: enterprise-rag-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: enterprise-rag-config
+data:
+  rag_config.json: |
+    {
+      "retrieval_config": {
+        "type": "hybrid",
+        "top_k": 5,
+        "similarity_threshold": 0.7,
+        "reranker_threshold": 0.4,
+        "use_reranker": true
+      },
+      "augmentation_config": {
+        "max_context_length": 4000,
+        "max_documents": 10,
+        "citation_format": "inline",
+        "strategy": "relevance_weighted",
+        "include_metadata": true
+      },
+      "generation_config": {
+        "model": "gpt-3.5-turbo",
+        "temperature": 0.7,
+        "max_tokens": 500,
+        "provider": "openai",
+        "prompt_template": "default"
+      },
+      "vector_store_config": {
+        "type": "faiss",
+        "index_name": "document_index",
+        "embedding_model": "sentence-transformers/all-mpnet-base-v2",
+        "embedding_dimension": 768,
+        "index_path": "/app/data/index"
+      }
+    }
