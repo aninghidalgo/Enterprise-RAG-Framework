@@ -2,7 +2,6 @@
 
 # Enterprise-RAG-Framework
 
-<img src="docs/images/logo.png" alt="Enterprise-RAG-Framework Logo" width="200"/>
 
 **Production-grade Retrieval-Augmented Generation with enterprise features, comprehensive evaluation, and monitoring**
 
@@ -10,7 +9,6 @@
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue)](https://www.python.org/)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/TaimoorKhan10/Enterprise-RAG-Framework/ci-cd.yml?branch=main)](https://github.com/TaimoorKhan10/Enterprise-RAG-Framework/actions)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![GitHub Stars](https://img.shields.io/github/stars/TaimoorKhan10/Enterprise-RAG-Framework?style=social)](https://github.com/TaimoorKhan10/Enterprise-RAG-Framework/stargazers)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](docs/)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green.svg)](https://github.com/TaimoorKhan10/Enterprise-RAG-Framework/actions)
 
@@ -21,7 +19,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/rag-architecture.png" alt="Enterprise RAG Architecture" width="800"/>
+
 </p>
 
 ## 🌟 Overview
